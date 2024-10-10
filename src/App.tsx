@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.scss";
+import ArticleList from "./components/ArticlesList";
+import Pagination from "@mui/material/Pagination";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <header className="header">
+        <p className="header__title">Realworld Blog</p>
+        <div className="header__button">
+          <button className="header__sign-in-button">Sign In</button>
+          <button className="header__sign-up-button">Sign Up</button>
+        </div>
+      </header>
+      <main>
+        <ArticleList />
+      </main>
+      <footer>
+        <div className="pagination">
+          <Pagination
+            count={20}
+            shape="rounded"
+            size="small"
+            defaultPage={1} //Начальная страница
+          />
+        </div>
+      </footer>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
