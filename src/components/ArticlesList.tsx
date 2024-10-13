@@ -1,13 +1,18 @@
 import Article from "./Articles";
-const ArticleList = () => {
+import { ArticleInterface } from "./Articles";
+
+interface ArticleListProps {
+  data: ArticleInterface[];
+}
+const ArticleList: React.FC<ArticleListProps> = ({ data }) => {
+  console.log(data);
   return (
     <ul className="article-list">
-      <Article />
-      <Article />
-      <Article />
-      <Article />
-      <Article />
+      {data?.map((article) => (
+        <Article key={article.slug} article={article} />
+      ))}
     </ul>
   );
 };
+
 export default ArticleList;

@@ -1,27 +1,39 @@
+import { useState } from "react";
 import "./App.scss";
 import ArticleList from "./components/ArticlesList";
+import Header from "./components/Header";
 import Pagination from "@mui/material/Pagination";
+import { useArticles } from "./components/api/Api";
+import GradientCircularProgress from "./components/GradientCircularProgress";
 
 function App() {
+  const [page, setPage] = useState<number>(0);
+  const { data, error, isLoading } = useArticles(page); // Используем кастомный хук
+  console.log(data);
+  if (error) {
+    return <div></div>;
+  }
+
   return (
     <>
-      <header className="header">
-        <p className="header__title">Realworld Blog</p>
-        <div className="header__button">
-          <button className="header__sign-in-button">Sign In</button>
-          <button className="header__sign-up-button">Sign Up</button>
+      <Header />
+      {isLoading && (
+        <div className="loading">
+          <GradientCircularProgress />
         </div>
-      </header>
-      <main>
-        <ArticleList />
-      </main>
+      )}
+      <ArticleList data={data?.articles} />
       <footer>
         <div className="pagination">
           <Pagination
-            count={20}
+            onChange={(_event: React.ChangeEvent<unknown>, newPage: number) =>
+              setPage((newPage - 1) * 5)
+            }
+            count={Math.ceil(data?.articlesCount / 5) || 0}
+            // Используем количество статей из данных
             shape="rounded"
             size="small"
-            defaultPage={1} //Начальная страница
+            defaultPage={1}
           />
         </div>
       </footer>
