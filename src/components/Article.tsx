@@ -1,5 +1,7 @@
 import { nanoid } from "nanoid"; //пока оставлю
 import cleanText from "./utils/utils";
+import { getParsedDate } from "./utils/utils";
+import { Link } from "react-router-dom";
 export interface ArticleInterface {
   author: {
     username: string;
@@ -15,23 +17,18 @@ export interface ArticleInterface {
   title: string;
   updatedAt: string;
 }
-import { getParsedDate } from "./utils/utils";
+
 interface ArticleProps {
   article: ArticleInterface;
 }
 
 const Article: React.FC<ArticleProps> = ({ article }) => {
-  console.log(article);
-
-  const handleClick = () => {
-    console.log("хуй");
-  };
   return (
     <li className="article-list__item">
       <div className="article-list__header-left">
-        <h1 className="article-list__title" onClick={handleClick}>
-          {cleanText(article.title)}
-        </h1>
+        <Link className="link" to={`/article/${article.slug}`}>
+          <h1 className="article-list__title">{cleanText(article.title)}</h1>
+        </Link>
         <ul className="article-list__tag-list">
           {article.tagList?.map((tag) => (
             <li key={nanoid()} className="article-list__tag-item">
@@ -61,7 +58,7 @@ const Article: React.FC<ArticleProps> = ({ article }) => {
       </div>
 
       <p className="article-list__description article-list__footer">
-        {cleanText(article.body)}
+        {cleanText(article.description)}
       </p>
     </li>
   );

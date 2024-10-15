@@ -1,15 +1,37 @@
-import { useState } from "react";
 import "./App.scss";
-import ArticleList from "./components/ArticlesList";
-import Header from "./components/Header";
+//хуки и прочее
+import { useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
+
+//get запросы
 import { useArticles } from "./components/api/Api";
-import GradientCircularProgress from "./components/GradientCircularProgress";
+
+//импорт копонентов
+import ArticleList from "./components/ArticlesList";
+import Header from "./components/Header/Header";
+import GradientCircularProgress from "./components/GradientCircularProgress/GradientCircularProgress";
+import ArticleSlug from "./components/ArtickeSlug/ArtickeSlug";
+import SignUp from "./components/SignUp/SignUp";
+import SignIn from "./components/SignIn/SignIn";
 
 function App() {
   const [page, setPage] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, error, isLoading } = useArticles(page); // Используем кастомный хук
-  console.log(data);
+  const location = useLocation();
+  const isArticleListRoute =
+    location.pathname === "/" || location.pathname === "/article";
+
+  const handlePageChange = (
+    _event: React.ChangeEvent<unknown>,
+    newPage: number
+  ) => {
+    setPage((newPage - 1) * 5);
+    setCurrentPage(newPage);
+  };
+
   if (error) {
     return <div></div>;
   }
@@ -17,26 +39,30 @@ function App() {
   return (
     <>
       <Header />
-      {isLoading && (
-        <div className="loading">
-          <GradientCircularProgress />
-        </div>
-      )}
-      <ArticleList data={data?.articles} />
-      <footer>
-        <div className="pagination">
-          <Pagination
-            onChange={(_event: React.ChangeEvent<unknown>, newPage: number) =>
-              setPage((newPage - 1) * 5)
-            }
-            count={Math.ceil(data?.articlesCount / 5) || 0}
-            // Используем количество статей из данных
-            shape="rounded"
-            size="small"
-            defaultPage={1}
+      <Routes>
+        <Route path="/">
+          <Route index element={<ArticleList data={data?.articles} />} />
+          <Route
+            path="article"
+            element={<ArticleList data={data?.articles} />}
           />
-        </div>
-      </footer>
+          <Route path="/article/:slug" element={<ArticleSlug />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/sign-in" element={<SignIn />} />
+        </Route>
+      </Routes>
+      {isLoading && isArticleListRoute
+        ? isArticleListRoute && <GradientCircularProgress />
+        : isArticleListRoute && (
+            <Pagination
+              className="pagination"
+              onChange={handlePageChange}
+              count={Math.ceil((data?.articlesCount || 0) / 5)} //тут кстати переделать надо на проверку чётности страниц
+              shape="rounded"
+              size="small"
+              page={currentPage}
+            />
+          )}
     </>
   );
 }

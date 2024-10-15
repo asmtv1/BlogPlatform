@@ -1,11 +1,10 @@
-import Article from "./Articles";
-import { ArticleInterface } from "./Articles";
+import Article from "./Article";
+import { ArticleInterface } from "./Article";
 
 interface ArticleListProps {
   data: ArticleInterface[];
 }
 const ArticleList: React.FC<ArticleListProps> = ({ data }) => {
-  console.log(data);
   return (
     <ul className="article-list">
       {data?.map((article) => (

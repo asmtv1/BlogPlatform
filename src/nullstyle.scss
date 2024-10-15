@@ -82,3 +82,50 @@ h6 {
   font-size: inherit;
   font-weight: inherit;
 }
+/* Не обнулять Дауна! */
+.markdown * {
+  padding: revert;
+  margin: revert;
+  border: revert;
+  font-size: revert;
+  font-weight: revert;
+  line-height: revert;
+  text-decoration: revert;
+  list-style: revert;
+  vertical-align: revert;
+  display: revert;
+  outline: revert;
+  box-sizing: revert;
+}
+
+.markdown img {
+  vertical-align: middle;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  font-weight: bold;
+  margin: 0.67em 0;
+}
+
+.markdown p {
+  margin: 1em 0;
+}
+
+.markdown ul {
+  list-style: disc inside;
+  margin: 1em 0;
+}
+
+.markdown a {
+  text-decoration: underline;
+  color: inherit;
+}
+
+.markdown a:hover {
+  text-decoration: underline;
+}

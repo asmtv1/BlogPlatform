@@ -23,3 +23,12 @@ export default function cleanText(text: string) {
     return text;
   }
 }
+//проверка на дауна
+import markdownToJsx from 'markdown-to-jsx';
+import { renderToStaticMarkup } from "react-dom/server";
+export function isMarkdown(text:string) {
+  const renderedHtml = renderToStaticMarkup(markdownToJsx({ children: text }));
+  // Сравниваем исходный текст с результатом рендера в HTML
+
+  return renderedHtml !== text;
+}

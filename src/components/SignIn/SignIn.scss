@@ -1,0 +1,89 @@
+// Переменные
+$color-background: #ffffff;
+$color-border: #d9d9d9;
+$color-shadow: rgba(0, 0, 0, 0.07);
+$color-shadow-light: rgba(0, 0, 0, 0.0503198);
+$color-shadow-medium: rgba(0, 0, 0, 0.0417275);
+$color-shadow-dark: rgba(0, 0, 0, 0.035);
+$color-shadow-deep: rgba(0, 0, 0, 0.0282725);
+$color-shadow-lighter: rgba(0, 0, 0, 0.0196802);
+$color-primary: #1890ff;
+$color-primary-dark: #262626;
+$color-text-muted: rgba(140, 140, 140, 1);
+$font-family: "Roboto", sans-serif;
+
+.sign-in {
+  width: 385px;
+  height: 375px;
+  margin: 60px auto 0;
+  background: $color-background;
+  border: 1px solid $color-border;
+  border-radius: 6px;
+  box-shadow: 0px 22px 106px $color-shadow,
+    0px 9.19107px 44.2843px $color-shadow-light,
+    0px 4.91399px 23.6765px $color-shadow-medium,
+    0px 2.75474px 13.2728px $color-shadow-dark,
+    0px 1.46302px 7.04911px $color-shadow-deep,
+    0px 0.608796px 2.93329px $color-shadow-lighter;
+
+  &__title {
+    margin-top: 48px;
+    text-align: center;
+    font-family: $font-family;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 28px;
+    color: $color-primary-dark;
+  }
+
+  &__form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-inline: auto;
+    font-family: $font-family;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    text-align: left;
+  }
+
+  &__input {
+    width: 320px;
+    height: 40px;
+    margin-inline: auto;
+    padding: 8px 12px;
+    border: 1px solid $color-border;
+    border-radius: 4px;
+  }
+
+  &__button {
+    width: 319px;
+    height: 40px;
+    margin: 20px auto 0;
+    border-radius: 5px;
+    background: $color-primary;
+    font-family: $font-family;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: center;
+    color: #fff;
+  }
+
+  &__signin-prompt {
+    font-family: $font-family;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: center;
+    color: $color-text-muted;
+  }
+}

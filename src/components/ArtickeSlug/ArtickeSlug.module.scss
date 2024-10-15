@@ -1,0 +1,33 @@
+.articlePost {
+  margin-inline: auto;
+  margin-top: 25px;
+  height: auto;
+  grid-template-rows: repeat(1, 1fr);
+  margin-bottom: 30px;
+}
+
+.articleListBody {
+  margin-top: 25px;
+}
+
+.articleListDescription {
+  padding-right: 0px;
+  height: auto;
+}
+
+.articleListTitle {
+  white-space: wrap;
+
+  &:hover {
+    text-decoration: none;
+    cursor: auto;
+  }
+}
+
+.articleListItem {
+  display: grid; /* Добавьте display: grid, если это требуется */
+  grid-template-columns: repeat(1, 1fr);
+}
+.Bottom {
+  padding: 20px;  
+}

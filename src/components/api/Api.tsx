@@ -1,9 +1,14 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import axios from "axios";
+import { ArticleInterface } from "../Article";
 
-export async function fetchArticleList(page: number) {
+interface ArticleResponse {
+  article: ArticleInterface;
+}
+
+async function getArticleList(page: number): Promise<ArticleResponse> {
   try {
-    const response = await axios.get(
+    const response = await axios.get<ArticleResponse>(
       `https://blog-platform.kata.academy/api/articles?&limit=5&offset=${page}`
     );
     return response.data; // Возвращаем только данные
@@ -16,7 +21,7 @@ export async function fetchArticleList(page: number) {
 export function useArticles(page: number) {
   return useQuery({
     queryKey: ["ArticleList", page],
-    queryFn: () => fetchArticleList(page),
+    queryFn: () => getArticleList(page),
     staleTime: 5 * 60 * 1000,
     select: (response) => ({
       articles: response.articles,
@@ -26,9 +31,9 @@ export function useArticles(page: number) {
   } as UseQueryOptions<any, Error, any, [string, number]>);
 }
 
-export async function fetchArticle(slug: string) {
+async function gethArticleSlug(slug: string): Promise<ArticleResponse> {
   try {
-    const response = await axios.get(
+    const response = await axios.get<ArticleResponse>(
       `https://blog-platform.kata.academy/api/articles/${slug}`
     );
     return response.data; // Возвращаем только данные
@@ -38,3 +43,12 @@ export async function fetchArticle(slug: string) {
   }
 }
 
+export function useArticleSlug(slug: string) {
+  return useQuery({
+    queryKey: ["ArticleSlug", slug],
+    queryFn: () => gethArticleSlug(slug),
+    staleTime: 5 * 60 * 1000,
+
+    keepPreviousData: true,
+  } as UseQueryOptions<any, Error, any, [string, string]>);
+}
