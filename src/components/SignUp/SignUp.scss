@@ -14,17 +14,12 @@ $font-family: "Roboto", sans-serif;
 
 .sign-up {
   width: 384px;
-  height: 599px;
+  height: auto;
   margin: 60px auto 0;
   background: $color-background;
   border: 1px solid $color-border;
   border-radius: 6px;
-  box-shadow: 0px 22px 106px $color-shadow,
-    0px 9.19107px 44.2843px $color-shadow-light,
-    0px 4.91399px 23.6765px $color-shadow-medium,
-    0px 2.75474px 13.2728px $color-shadow-dark,
-    0px 1.46302px 7.04911px $color-shadow-deep,
-    0px 0.608796px 2.93329px $color-shadow-lighter;
+  box-shadow: 0px 22px 106px $color-shadow;
 
   &__title {
     margin-top: 48px;
@@ -76,6 +71,7 @@ $font-family: "Roboto", sans-serif;
     font-weight: 400;
     line-height: 22px;
     text-align: left;
+    flex-direction: column;
   }
 
   &__checkbox {
@@ -114,6 +110,29 @@ $font-family: "Roboto", sans-serif;
     font-weight: 400;
     line-height: 20px;
     text-align: center;
+    padding-bottom: 50px;
     color: $color-text-muted;
+  }
+  &__error {
+    font-family: $font-family;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    text-align: left;
+    color: rgba(245, 34, 45, 1);
+  }
+  &__checkbox-label-wraper {
+    display: flex;
+  }
+  .error {
+    border-color: rgba(245, 34, 45, 1);
+  }
+  &__server-error {
+    top: 300px;
+    position: absolute;
+    width: 400px;
+    height: 100px;
+    left: 35%;
+    align-items: center;
   }
 }

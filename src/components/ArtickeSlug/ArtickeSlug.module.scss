@@ -29,5 +29,20 @@
   grid-template-columns: repeat(1, 1fr);
 }
 .Bottom {
-  padding: 20px;  
+  padding: 20px;
+}
+.changes {
+  position: absolute;
+  top: 170px;
+  display: flex;
+  gap: 12px;
+}
+
+.edit {
+  border: 1px solid rgba(82, 196, 26, 1);
+  color: rgba(82, 196, 26, 1);
+  width: 65px;
+  border-radius: 5px;
+  height: 32px;
+  background: var(--background);
 }

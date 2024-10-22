@@ -1,0 +1,147 @@
+$color-background: #ffffff;
+$color-border: #d9d9d9;
+$color-shadow: rgba(0, 0, 0, 0.07);
+$font-family: "Roboto", sans-serif;
+$color-primary-dark: #262626;
+$color-primary: #1890ff;
+.new-article {
+  width: 940px;
+  height: auto;
+  margin: 60px auto 0;
+  background: $color-background;
+  border: 1px solid $color-border;
+  border-radius: 6px;
+  box-shadow: 0px 22px 106px $color-shadow;
+  padding-bottom: 48px;
+  &__title {
+    margin-top: 48px;
+    text-align: center;
+    font-family: $font-family;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 28px;
+    color: $color-primary-dark;
+  }
+  &__form {
+    padding-inline: 32px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 21px;
+  }
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-family: $font-family;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    text-align: left;
+  }
+
+  &__input {
+    width: 875px;
+    margin-inline: auto;
+    padding: 10px 12px;
+    border: 1px solid $color-border;
+    border-radius: 4px;
+    min-height: 40px;
+    overflow: hidden; // Отключаем прокрутку
+    resize: none; // Отключаем возможность изменения размера вручную
+    white-space: pre-wrap; // Сохраняем пробелы и перенос строк
+    word-wrap: break-word; // Переносим длинные слова
+  }
+  &__input-tag {
+    width: 300px;
+    margin-inline: auto;
+    padding: 10px 12px;
+    border: 1px solid $color-border;
+    border-radius: 4px;
+    min-height: 40px;
+    overflow: hidden; // Отключаем прокрутку
+    resize: none; // Отключаем возможность изменения размера вручную
+    white-space: pre-wrap; // Сохраняем пробелы и перенос строк
+    word-wrap: break-word; // Переносим длинные слова
+  }
+
+  &__button {
+    width: 319px;
+    height: 40px;
+    border-radius: 5px;
+    background: $color-primary;
+    font-family: $font-family;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: center;
+    color: #fff;
+  }
+  &__error {
+    font-family: $font-family;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    text-align: left;
+    color: rgba(245, 34, 45, 1);
+  }
+  &__server-error {
+    top: 300px;
+    position: absolute;
+    width: 400px;
+    height: 100px;
+    left: 35%;
+    align-items: center;
+  }
+  .error {
+    border-color: rgba(245, 34, 45, 1);
+  }
+  form textarea,
+  form input {
+    field-sizing: content;
+  }
+  &__delete-button {
+    color: rgba(245, 34, 45, 1);
+    background: var(--background);
+    border: 1px solid rgba(245, 34, 45, 1);
+    height: 40px;
+    width: 120px;
+    border-radius: 5px;
+  }
+  &__map-tag-wrapper {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  &__add-button {
+    color: rgba(24, 144, 255, 1);
+    background: var(--background);
+    height: 40px;
+    width: 136px;
+    border-radius: 5px;
+    border: 1px solid rgba(24, 144, 255, 1);
+  }
+  &__tag-row {
+    display: flex;
+    gap: 18px;
+    margin-right: 18px;
+  }
+  &__add-tag-wrapper {
+    display: flex;
+    align-items: flex-end;
+  }
+  &__success-sign-in {
+    top: 300px;
+    position: absolute;
+    width: 400px;
+    height: 100px;
+    left: 35%;
+    align-items: center;
+    justify-content: center;
+  }
+}

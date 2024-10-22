@@ -15,6 +15,9 @@ import GradientCircularProgress from "./components/GradientCircularProgress/Grad
 import ArticleSlug from "./components/ArtickeSlug/ArtickeSlug";
 import SignUp from "./components/SignUp/SignUp";
 import SignIn from "./components/SignIn/SignIn";
+import Welcome from "./components/Welcome/Welcome";
+import Profile from "./components/Profile/Profile";
+import NewArticle from "./components/NewArticle/NewArticle";
 
 function App() {
   const [page, setPage] = useState<number>(0);
@@ -49,6 +52,9 @@ function App() {
           <Route path="/article/:slug" element={<ArticleSlug />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/welcome" element={<Welcome />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/new-article" element={<NewArticle />} />
         </Route>
       </Routes>
       {isLoading && isArticleListRoute

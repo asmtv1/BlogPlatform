@@ -2,6 +2,7 @@ import { nanoid } from "nanoid"; //пока оставлю
 import cleanText from "./utils/utils";
 import { getParsedDate } from "./utils/utils";
 import { Link } from "react-router-dom";
+
 export interface ArticleInterface {
   author: {
     username: string;

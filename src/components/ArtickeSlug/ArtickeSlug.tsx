@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useArticleSlug } from "../api/Api";
 import GradientCircularProgress from "../GradientCircularProgress/GradientCircularProgress";
 import cleanText from "../utils/utils";
@@ -7,10 +7,23 @@ import { getParsedDate } from "../utils/utils";
 import styles from "./ArtickeSlug.module.scss";
 import Markdown from "markdown-to-jsx";
 import { isMarkdown } from "../utils/utils";
-
+import { useQuery } from "@tanstack/react-query";
+import Confirm from "../Confirm/Confirm";
+interface dataUser {
+  user: {
+    email: string;
+    token: string;
+    username: string;
+  };
+}
 const ArticleSlug: React.FC = () => {
   const { slug } = useParams();
-  console.log(slug);
+
+  const { data: datauser } = useQuery<dataUser | undefined>({
+    queryKey: ["user"],
+  });
+
+  console.log("это", datauser);
 
   if (!slug) {
     // Если slug отсутствует, можно вернуть компонент загрузки или ошибку
@@ -24,7 +37,7 @@ const ArticleSlug: React.FC = () => {
   if (error) {
     return <div></div>;
   }
-
+  console.log("что тут", article);
   return (
     <>
       <div className={`article-list__item ${styles.articlePost}`}>
@@ -42,6 +55,15 @@ const ArticleSlug: React.FC = () => {
           </ul>
         </div>
         <div className="article-list__header-right">
+          {article.author?.username === datauser?.user?.username && (
+            <div className={styles.changes}>
+              <Confirm slug={article?.slug}></Confirm>
+
+              <Link className="link" to="/new-article" state={{ article }}>
+                <button className={styles.edit}>Edit</button>
+              </Link>
+            </div>
+          )}
           <div>
             <p className="article-list__author">{article.author?.username}</p>
             <div className="article-list__date">
@@ -60,6 +82,7 @@ const ArticleSlug: React.FC = () => {
             }}
           />
         </div>
+
         <div className="article-list__footer">
           <p
             className={`article-list__description ${styles.articleListDescription}`}
@@ -78,7 +101,7 @@ const ArticleSlug: React.FC = () => {
           )}
         </div>
       </div>
-      <div className={styles.Bottom}></div> 
+      <div className={styles.Bottom}></div>
     </>
   );
 };
