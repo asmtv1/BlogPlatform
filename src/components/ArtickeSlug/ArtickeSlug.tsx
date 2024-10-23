@@ -1,35 +1,41 @@
 import { Link, useParams } from "react-router-dom";
-import { useArticleSlug } from "../api/Api";
+import { favorited, unfavorited, useArticleSlug } from "../api/Api";
 import GradientCircularProgress from "../GradientCircularProgress/GradientCircularProgress";
-import cleanText from "../utils/utils";
+import cleanText, { getApiKeyToLocalStorage } from "../utils/utils";
 import { nanoid } from "nanoid"; //пока оставлю
 import { getParsedDate } from "../utils/utils";
 import styles from "./ArtickeSlug.module.scss";
 import Markdown from "markdown-to-jsx";
 import { isMarkdown } from "../utils/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Confirm from "../Confirm/Confirm";
-interface dataUser {
-  user: {
-    email: string;
-    token: string;
-    username: string;
-  };
-}
+import { ChangeEvent } from "react";
+import { DataUser } from "../intefface";
 const ArticleSlug: React.FC = () => {
   const { slug } = useParams();
 
-  const { data: datauser } = useQuery<dataUser | undefined>({
+  const { data: datauser } = useQuery<DataUser | undefined>({
     queryKey: ["user"],
   });
-
-  console.log("это", datauser);
 
   if (!slug) {
     // Если slug отсутствует, можно вернуть компонент загрузки или ошибку
     return <div>Error: Slug not found</div>;
   }
   const { data: { article } = {}, error, isLoading } = useArticleSlug(slug);
+  const queryClient = useQueryClient();
+  const ApiKey = !!getApiKeyToLocalStorage();
+  async function handleChange(e: ChangeEvent<HTMLInputElement>, slug: string) {
+    const isFavorited = e.target.checked;
+
+    // Обрабатываем действия добавления в избранное/удаления из избранного
+    isFavorited ? await favorited(slug) : await unfavorited(slug);
+
+    // Инвалидируем и повторно запрашиваем данные
+    const queryKey = ["ArticleSlug", slug];
+    queryClient.invalidateQueries({ queryKey });
+    await queryClient.refetchQueries({ queryKey, exact: true });
+  }
 
   if (isLoading) {
     return <GradientCircularProgress />; // вставить в ретурн внутри и убрать отсюда
@@ -37,15 +43,27 @@ const ArticleSlug: React.FC = () => {
   if (error) {
     return <div></div>;
   }
-  console.log("что тут", article);
+
   return (
     <>
       <div className={`article-list__item ${styles.articlePost}`}>
         <div className={`article-list__header-left `}>
-          <h1 className={`article-list__title ${styles.articleListTitle}`}>
-            {cleanText(article.title)}
-          </h1>
-
+          <div className="article-list__wrapper">
+            <h1 className={`article-list__title ${styles.articleListTitle}`}>
+              {cleanText(article.title)}
+            </h1>
+            <label className="article-list__label">
+              <input
+                onChange={(e) => handleChange(e, slug)}
+                className="article-list__check-input"
+                type="checkbox"
+                checked={article.favorited}
+                disabled={!ApiKey}
+              />
+              <span className="article-list__check-box"></span>
+              {article?.favoritesCount}
+            </label>
+          </div>
           <ul className={`article-list__tag-list `}>
             {article.tagList?.map((tag: string) => (
               <li key={nanoid()} className="article-list__tag-item">

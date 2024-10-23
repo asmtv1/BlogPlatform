@@ -21,6 +21,7 @@ const SignUp: React.FC = () => {
     watch,
     reset,
     formState: { errors },
+    setError,
   } = useForm<Myform>({
     mode: "onBlur",
   });
@@ -31,13 +32,25 @@ const SignUp: React.FC = () => {
     try {
       await createNewUser(data.username, data.email, data.password);
       reset(); // Убедитесь, что у вас есть функция reset для сброса формы
-      navigate("/welcome"); // Перенаправление на другую страницу после успешной регистрации
+      navigate("/"); // Перенаправление на другую страницу после успешной регистрации
     } catch (error: any) {
-      error.status === 422
-        ? setErrorMessage(
-            "Чт-то на сервере пошло не так.\nИзмените Username или Email address"
-          )
-        : setErrorMessage("Чт-то пошло не так");
+      const errorKey = Object.keys(error.response.data.errors)[0];
+      switch (errorKey) {
+        case "username":
+          setError("username", {
+            type: "manual",
+            message: "Имя пользователя занято",
+          });
+          break;
+        case "email":
+          setError("email", {
+            type: "manual",
+            message: "Такой адрес занят",
+          });
+          break;
+        default:
+          setErrorMessage("Чт-то пошло не так");
+      }
     }
   };
 

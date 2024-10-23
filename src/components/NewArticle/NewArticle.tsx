@@ -5,22 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Alert } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-
-interface ArticleForm {
-  title: string;
-  shortDescription: string;
-  text: string;
-  tags: string[];
-  name: any;
-}
-
-interface ArticleLocation {
-  body: string | undefined;
-  title: string | undefined;
-  tagList: string[] | (string | undefined)[] | undefined;
-  description: string | undefined;
-  slug: string;
-}
+import { ArticleForm, ArticleLocation } from "../intefface";
 
 const NewArticle: React.FC = () => {
   const location = useLocation();

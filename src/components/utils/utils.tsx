@@ -1,5 +1,6 @@
 import { parseISO, format } from "date-fns";
 import { ru } from "date-fns/locale";
+import { Navigate } from "react-router-dom";
 
 // Функция для безопасного парсинга даты
 export const getParsedDate = (createdAt: string) => {
@@ -57,4 +58,16 @@ export const getApiKeyToLocalStorage = () => {
   } else {
     return null;
   }
+};
+
+interface PrivateRouteProps {
+  element: React.ReactNode;
+  isAuthenticated: boolean;
+}
+
+export const PrivateRoute: React.FC<PrivateRouteProps> = ({
+  element,
+  isAuthenticated,
+}) => {
+  return isAuthenticated ? <>{element}</> : <Navigate to="/sign-in" />;
 };

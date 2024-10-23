@@ -4,24 +4,39 @@ import { useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { loginTokenUser } from "../api/Api";
 import { getApiKeyToLocalStorage } from "../utils/utils";
-const Header = () => {
+import { page } from "../intefface";
+
+const Header: React.FC<page> = ({ page }) => {
   const queryClient = useQueryClient();
+  const apiKey = getApiKeyToLocalStorage();
+
   const { data } = useQuery({
     queryKey: ["user"],
-    queryFn: () => loginTokenUser(getApiKeyToLocalStorage()),
-    enabled: !!getApiKeyToLocalStorage(),
+    queryFn: () => loginTokenUser(apiKey),
+    enabled: !!apiKey,
   });
+
   useMemo(() => !!data, [data]);
 
-  const handleClick = () => {
+  async function handleClick() {
     // это на выход
     localStorage.removeItem("ApiKey");
     queryClient.setQueryData(["user"], null);
-  };
+    await handleClickBlog();
+  }
+  async function handleClickBlog() {
+    try {
+      const queryKey = ["ArticleList", page];
+      queryClient.invalidateQueries({ queryKey });
+      await queryClient.refetchQueries({ queryKey, exact: true });
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return !!data ? (
     <>
       <div className="header">
-        <Link to="/">
+        <Link onClick={handleClickBlog} to="/">
           <p className="header__title">Realworld Blog</p>
         </Link>
         <div className="header__button">

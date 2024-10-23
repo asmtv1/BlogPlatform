@@ -7,6 +7,8 @@ import Pagination from "@mui/material/Pagination";
 
 //get запросы
 import { useArticles } from "./components/api/Api";
+// utils
+import { PrivateRoute } from "./components/utils/utils";
 
 //импорт копонентов
 import ArticleList from "./components/ArticlesList";
@@ -15,14 +17,18 @@ import GradientCircularProgress from "./components/GradientCircularProgress/Grad
 import ArticleSlug from "./components/ArtickeSlug/ArtickeSlug";
 import SignUp from "./components/SignUp/SignUp";
 import SignIn from "./components/SignIn/SignIn";
-import Welcome from "./components/Welcome/Welcome";
 import Profile from "./components/Profile/Profile";
 import NewArticle from "./components/NewArticle/NewArticle";
+import { useQuery } from "@tanstack/react-query";
+import { DataUser } from "./components/intefface";
 
 function App() {
   const [page, setPage] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, error, isLoading } = useArticles(page); // Используем кастомный хук
+  const { data: userData } = useQuery<DataUser>({
+    queryKey: ["user"],
+  });
   const location = useLocation();
   const isArticleListRoute =
     location.pathname === "/" || location.pathname === "/article";
@@ -41,20 +47,38 @@ function App() {
 
   return (
     <>
-      <Header />
+      <Header page={page} />
       <Routes>
         <Route path="/">
-          <Route index element={<ArticleList data={data?.articles} />} />
+          <Route
+            index
+            element={<ArticleList page={page} data={data?.articles} />}
+          />
           <Route
             path="article"
-            element={<ArticleList data={data?.articles} />}
+            element={<ArticleList page={page} data={data?.articles} />}
           />
           <Route path="/article/:slug" element={<ArticleSlug />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/welcome" element={<Welcome />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/new-article" element={<NewArticle />} />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute
+                element={<Profile />}
+                isAuthenticated={!!userData}
+              />
+            }
+          />
+          <Route
+            path="/new-article"
+            element={
+              <PrivateRoute
+                element={<NewArticle />}
+                isAuthenticated={!!userData}
+              />
+            }
+          />
         </Route>
       </Routes>
       {isLoading && isArticleListRoute

@@ -1,7 +1,10 @@
 import { nanoid } from "nanoid"; //пока оставлю
-import cleanText from "./utils/utils";
+import cleanText, { getApiKeyToLocalStorage } from "./utils/utils";
 import { getParsedDate } from "./utils/utils";
 import { Link } from "react-router-dom";
+import { ChangeEvent } from "react";
+import { favorited, unfavorited } from "./api/Api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface ArticleInterface {
   author: {
@@ -21,15 +24,43 @@ export interface ArticleInterface {
 
 interface ArticleProps {
   article: ArticleInterface;
+  page: number;
 }
 
-const Article: React.FC<ArticleProps> = ({ article }) => {
+const Article: React.FC<ArticleProps> = ({ page, article }) => {
+  const queryClient = useQueryClient();
+  const ApiKey = !!getApiKeyToLocalStorage();
+
+  async function handleChange(e: ChangeEvent<HTMLInputElement>, slug: string) {
+    const isFavorited = e.target.checked;
+
+    // Обрабатываем действия добавления в избранное/удаления из избранного
+    isFavorited ? await favorited(slug) : await unfavorited(slug);
+
+    // Инвалидируем и повторно запрашиваем данные
+    const queryKey = ["ArticleList", page];
+    queryClient.invalidateQueries({ queryKey });
+    await queryClient.refetchQueries({ queryKey, exact: true });
+  }
   return (
     <li className="article-list__item">
       <div className="article-list__header-left">
-        <Link className="link" to={`/article/${article.slug}`}>
-          <h1 className="article-list__title">{cleanText(article.title)}</h1>
-        </Link>
+        <div className="article-list__wrapper">
+          <Link className="link" to={`/article/${article.slug}`}>
+            <h1 className="article-list__title">{cleanText(article.title)}</h1>
+          </Link>
+          <label className="article-list__label">
+            <input
+              onChange={(e) => handleChange(e, article.slug)}
+              className="article-list__check-input"
+              type="checkbox"
+              checked={article.favorited}
+              disabled={!ApiKey}
+            />
+            <span className="article-list__check-box"></span>
+            {article?.favoritesCount}
+          </label>
+        </div>
         <ul className="article-list__tag-list">
           {article.tagList?.map((tag) => (
             <li key={nanoid()} className="article-list__tag-item">
@@ -65,3 +96,6 @@ const Article: React.FC<ArticleProps> = ({ article }) => {
   );
 };
 export default Article;
+function getArticleList(currentPage: number) {
+  throw new Error("Function not implemented.");
+}

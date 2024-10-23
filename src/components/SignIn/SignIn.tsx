@@ -7,6 +7,7 @@ import Alert from "@mui/material/Alert";
 import { useState } from "react";
 import { Typography } from "@mui/material";
 
+
 interface Myform {
   email: string;
   password: string;
@@ -30,6 +31,10 @@ const SignIn: React.FC = () => {
       queryClient.setQueryData(["user"], userData);
       reset();
       setSuccess(true);
+      const queryKey = ["ArticleList"];
+      queryClient.invalidateQueries({ queryKey });
+      await queryClient.refetchQueries({ queryKey, exact: true });
+
       setTimeout(() => {
         navigate("/");
       }, 1000); // немного посмотри на зеленый алерт, порадуйся )

@@ -6,15 +6,37 @@ import {
   saveApiKeyToLocalStorage,
 } from "../utils/utils";
 
+// Интерфейсы
 interface ArticleResponse {
-  [x: string]: any;
   article: ArticleInterface;
 }
 
+interface RegisterResponse {
+  user: {
+    username: string;
+    email: string;
+    token: string;
+  };
+}
+
+interface LoginResponse {
+  user: any;
+  email: string;
+  token: string;
+  username: string;
+  bio: string;
+  image: any;
+}
+//список постов
 async function getArticleList(page: number): Promise<ArticleResponse> {
   try {
     const response = await axios.get<ArticleResponse>(
-      `https://blog-platform.kata.academy/api/articles?&limit=5&offset=${page}`
+      `https://blog-platform.kata.academy/api/articles?&limit=5&offset=${page}`,
+      {
+        headers: {
+          Authorization: `Token ${getApiKeyToLocalStorage()}`, // Используйте шаблонную строку для добавления токена
+        },
+      }
     );
     return response.data; // Возвращаем только данные
   } catch (error) {
@@ -27,7 +49,7 @@ export function useArticles(page: number) {
   return useQuery({
     queryKey: ["ArticleList", page],
     queryFn: () => getArticleList(page),
-    staleTime: 5 * 60 * 1000,
+
     select: (response) => ({
       articles: response.articles,
       articlesCount: response.articlesCount,
@@ -36,10 +58,16 @@ export function useArticles(page: number) {
   } as UseQueryOptions<any, Error, any, [string, number]>);
 }
 
+// конкретная статья
 async function gethArticleSlug(slug: string): Promise<ArticleResponse> {
   try {
     const response = await axios.get<ArticleResponse>(
-      `https://blog-platform.kata.academy/api/articles/${slug}`
+      `https://blog-platform.kata.academy/api/articles/${slug}`,
+      {
+        headers: {
+          Authorization: `Token ${getApiKeyToLocalStorage()}`, // Используйте шаблонную строку для добавления токена
+        },
+      }
     );
     return response.data; // Возвращаем только данные
   } catch (error) {
@@ -56,15 +84,8 @@ export function useArticleSlug(slug: string) {
     keepPreviousData: true,
   } as UseQueryOptions<any, Error, any, [string, string]>);
 }
-// регистрация
-interface RegisterResponse {
-  user: {
-    username: string;
-    email: string;
-    token: string; // Добавляем поле token в ответ
-  };
-}
 
+// регистрация пользователя
 export async function createNewUser(
   username: string,
   email: string,
@@ -83,27 +104,54 @@ export async function createNewUser(
     throw error; // Пробрасываем ошибку, чтобы её можно было обработать позже
   }
 }
+// рекатирование пользователя
+export async function editUser(
+  email: string,
+  username: string,
+  password: string,
+  image: string
+): Promise<LoginResponse> {
+  try {
+    const userData: any = { user: { email, username, image } }; // Объект по умолчанию
 
-//вход по токену
-interface LoginResponse {
-  user: any;
-  email: string;
-  token: string;
-  username: string;
-  bio: string;
-  image: any;
+    if (password !== "") {
+      userData.user.password = password; // Добавляем пароль, если он не пустой
+    }
+
+    const response = await axios.put<LoginResponse>(
+      `https://blog-platform.kata.academy/api/user`,
+      userData, // Передаем данные в запросе
+      {
+        headers: {
+          Authorization: `Token ${getApiKeyToLocalStorage()}`,
+        },
+      }
+    );
+
+    console.log("посмотри", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error; // Пробрасываем ошибку для дальнейшей обработки
+  }
 }
 
+//вход по токену
 export async function loginTokenUser(token: string): Promise<LoginResponse> {
+  if (!token) {
+    throw new Error("Invalid token"); // Пробрасываем ошибку, если токен недействителен
+  }
+
   try {
     const response = await axios.get<LoginResponse>(
       `https://blog-platform.kata.academy/api/user`,
       {
         headers: {
-          Authorization: `Token ${token}`, // Используйте шаблонную строку для добавления токена
+          Authorization: `Token ${token}`,
         },
       }
     );
+
     console.log(response.data);
     return response.data; // Возвращаем данные ответа
   } catch (error) {
@@ -113,7 +161,6 @@ export async function loginTokenUser(token: string): Promise<LoginResponse> {
 }
 
 //вход по по логину с паролем
-
 export async function loginUserAxion(
   email: string,
   password: string
@@ -148,6 +195,7 @@ export async function updateUserAxion(
     throw error; // Пробрасываем ошибку для дальнейшей обработки
   }
 }
+//создание статьи
 export async function createNewArticle(
   title: string,
   description: string,
@@ -173,6 +221,7 @@ export async function createNewArticle(
     throw error; // Пробрасываем ошибку для дальнейшей обработки
   }
 }
+//редактирование статьи
 export async function editArticle(
   title: string,
   description: string,
@@ -199,7 +248,7 @@ export async function editArticle(
     throw error; // Пробрасываем ошибку для дальнейшей обработки
   }
 }
-
+//удаление статьи
 export async function deleteArticle(slug: string): Promise<ArticleResponse> {
   try {
     const response = await axios.delete<ArticleResponse>(
@@ -215,6 +264,47 @@ export async function deleteArticle(slug: string): Promise<ArticleResponse> {
     return response.data;
   } catch (error) {
     console.error("Error logging in user:", error);
+    throw error; // Пробрасываем ошибку для дальнейшей обработки
+  }
+}
+
+//лайк
+export async function favorited(slug: string): Promise<ArticleResponse> {
+  try {
+    const response = await axios.post<ArticleResponse>(
+      `https://blog-platform.kata.academy/api/articles/${slug}/favorite`,
+      {},
+      {
+        headers: {
+          Authorization: `Token ${getApiKeyToLocalStorage()}`, // Используйте шаблонную строку для добавления токена
+        },
+      }
+    );
+
+    console.log("посмотри", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error; // Пробрасываем ошибку для дальнейшей обработки
+  }
+}
+//унлайк
+export async function unfavorited(slug: string): Promise<ArticleResponse> {
+  try {
+    const response = await axios.delete<ArticleResponse>(
+      `https://blog-platform.kata.academy/api/articles/${slug}/favorite`,
+
+      {
+        headers: {
+          Authorization: `Token ${getApiKeyToLocalStorage()}`, // Используйте шаблонную строку для добавления токена
+        },
+      }
+    );
+
+    console.log("посмотри", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user:", error);
     throw error; // Пробрасываем ошибку для дальнейшей обработки
   }
 }

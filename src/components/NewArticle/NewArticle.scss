@@ -130,6 +130,7 @@ $color-primary: #1890ff;
     display: flex;
     gap: 18px;
     margin-right: 18px;
+    align-items: flex-end;
   }
   &__add-tag-wrapper {
     display: flex;

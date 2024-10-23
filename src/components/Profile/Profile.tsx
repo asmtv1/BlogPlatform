@@ -1,26 +1,20 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import "./Profile.scss";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-interface Myform {
-  username: string;
-  email: string;
-  newPassword: string;
-  avatarImage: string;
-}
-interface Mydata {
-  user: {
-    username: string;
-    email: string;
-    image: string;
-  };
-}
+import { editUser } from "../api/Api";
+import { DataUser, Myform } from "../intefface";
+
 const Profile: React.FC = () => {
-  const { data } = useQuery<Mydata>({
+  function setErrorMessage(arg0: string) {
+    throw new Error("Function not implemented.");
+  } // переделать
+  const { data } = useQuery<DataUser>({
     queryKey: ["user"],
   });
-
+  const queryClient = useQueryClient();
   const {
+    setError,
     register,
     handleSubmit,
     reset,
@@ -38,7 +32,35 @@ const Profile: React.FC = () => {
     }
   }, [data, reset]);
   const submit: SubmitHandler<Myform> = async (data) => {
-    console.log(data);
+    try {
+      await editUser(
+        data.email,
+        data.username,
+        data.newPassword,
+        data.avatarImage
+      );
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+      }); //инвалидируем юзера.
+    } catch (error: any) {
+      const errorKey = Object.keys(error.response.data.errors)[0];
+      switch (errorKey) {
+        case "username":
+          setError("username", {
+            type: "manual",
+            message: "Имя пользователя занято",
+          });
+          break;
+        case "email":
+          setError("email", {
+            type: "manual",
+            message: "Такой адрес занят",
+          });
+          break;
+        default:
+          setErrorMessage("Чт-то пошло не так");
+      }
+    }
   };
   return (
     <div className="profile">

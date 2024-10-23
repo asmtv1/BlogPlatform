@@ -10,11 +10,9 @@ import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Alert } from "@mui/material";
-interface AlertDialogProps {
-  slug: string;
-}
+import { Slug } from "../intefface";
 
-const AlertDialog: React.FC<AlertDialogProps> = ({ slug }) => {
+const AlertDialog: React.FC<Slug> = ({ slug }) => {
   const [open, setOpen] = React.useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const queryClient = useQueryClient();
