@@ -6,9 +6,6 @@ import { editUser } from "../api/Api";
 import { DataUser, Myform } from "../intefface";
 
 const Profile: React.FC = () => {
-  function setErrorMessage(arg0: string) {
-    throw new Error("Function not implemented.");
-  } // переделать
   const { data } = useQuery<DataUser>({
     queryKey: ["user"],
   });
@@ -56,7 +53,7 @@ const Profile: React.FC = () => {
           });
           break;
         default:
-          setErrorMessage("Чт-то пошло не так");
+          console.log("Чт-то пошло не так");
       }
     }
   };
