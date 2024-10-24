@@ -33,15 +33,13 @@ const Profile: React.FC = () => {
   }, [data, reset]);
   const submit: SubmitHandler<Myform> = async (data) => {
     try {
-      await editUser(
+      const user = await editUser(
         data.email,
         data.username,
         data.newPassword,
         data.avatarImage
       );
-      queryClient.invalidateQueries({
-        queryKey: ["user"],
-      }); //инвалидируем юзера.
+      queryClient.setQueryData(["user"], user); // по новой кэшируем
     } catch (error: any) {
       const errorKey = Object.keys(error.response.data.errors)[0];
       switch (errorKey) {

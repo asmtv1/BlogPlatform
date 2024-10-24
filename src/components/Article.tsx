@@ -3,7 +3,7 @@ import cleanText, { getApiKeyToLocalStorage } from "./utils/utils";
 import { getParsedDate } from "./utils/utils";
 import { Link } from "react-router-dom";
 import { ChangeEvent } from "react";
-import { favorited, unfavorited } from "./api/Api";
+import { favorited, unfavorited, useArticles } from "./api/Api";
 import { useQueryClient } from "@tanstack/react-query";
 
 export interface ArticleInterface {
@@ -30,18 +30,27 @@ interface ArticleProps {
 const Article: React.FC<ArticleProps> = ({ page, article }) => {
   const queryClient = useQueryClient();
   const ApiKey = !!getApiKeyToLocalStorage();
+  const { data } = useArticles(page);
 
   async function handleChange(e: ChangeEvent<HTMLInputElement>, slug: string) {
     const isFavorited = e.target.checked;
-
-    // Обрабатываем действия добавления в избранное/удаления из избранного
-    isFavorited ? await favorited(slug) : await unfavorited(slug);
-
-    // Инвалидируем и повторно запрашиваем данные
-    const queryKey = ["ArticleList", page];
-    queryClient.invalidateQueries({ queryKey });
-    await queryClient.refetchQueries({ queryKey, exact: true });
+    try {
+      // лайк\дизлайк
+      const updatedArticle = isFavorited
+        ? await favorited(slug)
+        : await unfavorited(slug);
+      const updatedArticles = data.articles.map((article: ArticleInterface) =>
+        article.slug === slug ? updatedArticle.article : article
+      );
+      queryClient.setQueryData(["ArticleList", page], (oldData: any) => ({
+        ...oldData, // тут счётчик страниц, его не трогамем
+        articles: updatedArticles, // обновляем поле articles
+      }));
+    } catch (error) {
+      console.error("Ошибка лайка:", error);
+    }
   }
+
   return (
     <li className="article-list__item">
       <div className="article-list__header-left">
@@ -96,6 +105,3 @@ const Article: React.FC<ArticleProps> = ({ page, article }) => {
   );
 };
 export default Article;
-function getArticleList(currentPage: number) {
-  throw new Error("Function not implemented.");
-}

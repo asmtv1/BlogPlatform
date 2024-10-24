@@ -29,6 +29,7 @@ function App() {
   const { data: userData } = useQuery<DataUser>({
     queryKey: ["user"],
   });
+
   const location = useLocation();
   const isArticleListRoute =
     location.pathname === "/" || location.pathname === "/article";

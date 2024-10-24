@@ -22,19 +22,21 @@ const ArticleSlug: React.FC = () => {
     // Если slug отсутствует, можно вернуть компонент загрузки или ошибку
     return <div>Error: Slug not found</div>;
   }
+
   const { data: { article } = {}, error, isLoading } = useArticleSlug(slug);
   const queryClient = useQueryClient();
-  const ApiKey = !!getApiKeyToLocalStorage();
+  const DisabledLike = !!getApiKeyToLocalStorage();
   async function handleChange(e: ChangeEvent<HTMLInputElement>, slug: string) {
-    const isFavorited = e.target.checked;
-
-    // Обрабатываем действия добавления в избранное/удаления из избранного
-    isFavorited ? await favorited(slug) : await unfavorited(slug);
-
-    // Инвалидируем и повторно запрашиваем данные
-    const queryKey = ["ArticleSlug", slug];
-    queryClient.invalidateQueries({ queryKey });
-    await queryClient.refetchQueries({ queryKey, exact: true });
+    const isFavorited = e.target.checked
+    try {
+      // лайк\дизлайк
+      const updatedArticle = isFavorited
+        ? await favorited(slug)
+        : await unfavorited(slug);
+      queryClient.setQueryData(["ArticleSlug", slug], updatedArticle);
+    } catch (error) {
+      console.error("Ошибка лайка:", error);
+    }
   }
 
   if (isLoading) {
@@ -58,7 +60,7 @@ const ArticleSlug: React.FC = () => {
                 className="article-list__check-input"
                 type="checkbox"
                 checked={article.favorited}
-                disabled={!ApiKey}
+                disabled={!DisabledLike}
               />
               <span className="article-list__check-box"></span>
               {article?.favoritesCount}

@@ -10,9 +10,7 @@ import { ArticleForm, ArticleLocation } from "../intefface";
 const NewArticle: React.FC = () => {
   const location = useLocation();
   const article = location.state?.article as ArticleLocation | undefined;
-
   const queryClient = useQueryClient();
-
   const navigate = useNavigate();
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -40,12 +38,6 @@ const NewArticle: React.FC = () => {
       let slug;
 
       if (article) {
-        queryClient.invalidateQueries({
-          queryKey: ["ArticleSlug", article.slug],
-        }); //инвалидируем конкретную статью.
-        queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey[0] === "ArticleList",
-        }); // инвалидируем список всех статей :(
         slug = await editArticle(
           data.title,
           data.shortDescription,
@@ -53,6 +45,7 @@ const NewArticle: React.FC = () => {
           data.tags,
           article.slug
         );
+        queryClient.setQueryData(["ArticleSlug", article.slug], slug); // кэшируем изменения
       } else {
         // Создание новой статьи
         slug = await createNewArticle(
@@ -62,14 +55,9 @@ const NewArticle: React.FC = () => {
           data.tags
         );
       }
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === "ArticleList",
-      }); //инвалидируем артиклист
-      console.log(data);
       setSuccess(true); // Показываем зеленый алерт (успешное выполнение)
       reset(); // Сбрасываем форму
-
-      // Навигация с задержкой, чтобы пользователь мог увидеть успешный алерт
+      // Навигация с задержкой, чтобы пользователь мог увидеть успешный алерт и порадовался
       const timer = setTimeout(() => {
         navigate(`/article/${slug.article.slug}`);
       }, 1500);

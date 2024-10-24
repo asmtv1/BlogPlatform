@@ -1,4 +1,8 @@
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from "@tanstack/react-query";
 import axios from "axios";
 import { ArticleInterface } from "../Article";
 import {
@@ -241,7 +245,7 @@ export async function editArticle(
         },
       }
     );
-    console.log(response.data);
+    console.log("что тут?", response.data);
     return response.data;
   } catch (error) {
     console.error("Error logging in user:", error);
@@ -282,6 +286,7 @@ export async function favorited(slug: string): Promise<ArticleResponse> {
     );
 
     console.log("посмотри", response.data);
+
     return response.data;
   } catch (error) {
     console.error("Error updating user:", error);
@@ -293,18 +298,18 @@ export async function unfavorited(slug: string): Promise<ArticleResponse> {
   try {
     const response = await axios.delete<ArticleResponse>(
       `https://blog-platform.kata.academy/api/articles/${slug}/favorite`,
-
       {
         headers: {
-          Authorization: `Token ${getApiKeyToLocalStorage()}`, // Используйте шаблонную строку для добавления токена
+          Authorization: `Token ${getApiKeyToLocalStorage()}`,
         },
       }
     );
 
     console.log("посмотри", response.data);
+
     return response.data;
   } catch (error) {
     console.error("Error updating user:", error);
-    throw error; // Пробрасываем ошибку для дальнейшей обработки
+    throw error;
   }
 }
