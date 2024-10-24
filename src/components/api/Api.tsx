@@ -1,8 +1,4 @@
-import {
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from "@tanstack/react-query";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import axios from "axios";
 import { ArticleInterface } from "../Article";
 import {
